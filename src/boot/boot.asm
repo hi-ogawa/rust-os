@@ -9,7 +9,7 @@ dd - (0x1BADB002 + (1 << 0 | 1 << 1))
 ; Stack
 section .kernel_stack
 stack_bottom:
-  resb 64
+  resb 1 << 17
 stack_top:
 
 
