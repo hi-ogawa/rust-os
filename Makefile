@@ -4,7 +4,7 @@ kernel := build/kernel.bin
 rust_kernel := target/target/debug/libos.a
 
 run: $(iso)
-	qemu-system-x86_64 -cdrom $(iso)
+	qemu-system-x86_64 -serial stdio -cdrom $(iso)
 
 iso: $(iso)
 
@@ -25,6 +25,7 @@ cargo:
 	cargo build --target target.json
 
 clean:
+	@cargo clean
 	@rm -rf build
 
 .PHONY: clean run iso kernel cargo
