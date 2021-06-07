@@ -1,10 +1,13 @@
+example := dev
+qemu_display := gtk
+
 iso := build/os.iso
 isodir := build/isodir
 kernel := build/kernel.bin
-rust_kernel := target/target/debug/libos.a
+rust_kernel := target/target/debug/examples/lib$(example).a
 
 run: $(iso)
-	qemu-system-x86_64 -serial stdio -cdrom $(iso)
+	qemu-system-x86_64 -cdrom $(iso) -serial stdio -display $(qemu_display)
 
 iso: $(iso)
 
@@ -22,7 +25,7 @@ $(kernel): src/boot/linker.ld src/boot/boot.asm cargo
 	ld -n -o $(kernel) -T src/boot/linker.ld build/boot/boot.o $(rust_kernel)
 
 cargo:
-	cargo build --target target.json
+	cargo build --target target.json --example $(example)
 
 clean:
 	@cargo clean

@@ -3,7 +3,20 @@ name = "os"
 version = "0.1.0"
 edition = "2018"
 
-[lib]
+[dependencies]
+
+[[example]]
+name = "dev"
 crate-type = ["staticlib"]
 
-[dependencies]
+[[example]]
+name = "hello_world"
+crate-type = ["staticlib"]
+
+[[example]]
+name = "fmt"
+crate-type = ["staticlib"]
+
+[[example]]
+name = "panic"
+crate-type = ["staticlib"]
