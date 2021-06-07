@@ -7,9 +7,13 @@ make run
 Misc
 
 ```
-# Toolchain version
+# Rust toolchain
 $ rustc --version
 rustc 1.54.0-nightly (c79419af0 2021-06-04)
+
+# Run in docker
+$ docker build -t hiogawa/rust-os .
+$ docker run -it --rm hiogawa/rust-os make run example=uart qemu_display=none
 ```
 
 References
