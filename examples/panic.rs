@@ -1,6 +1,6 @@
 #![no_std]
 
-use os;
+use os::serial_println;
 
 //
 // Panic handler
@@ -9,7 +9,7 @@ use core::panic::PanicInfo;
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    os::serial_println!("{}", info);
+    serial_println!("{}", info);
     loop {}
 }
 
@@ -18,7 +18,6 @@ fn panic(info: &PanicInfo) -> ! {
 //
 #[no_mangle]
 pub extern "C" fn kernel_main() -> ! {
-    os::uart::serial_init();
     assert_eq!(1 + 2, 0);
     loop {}
 }

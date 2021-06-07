@@ -1,7 +1,6 @@
 #![no_std]
 
 use os::println;
-use os::vga;
 
 //
 // Panic handler
@@ -19,7 +18,6 @@ fn panic(info: &PanicInfo) -> ! {
 //
 #[no_mangle]
 pub extern "C" fn kernel_main() -> ! {
-    vga::clear_screen();
     println!("{} / {} = {}", 1, 3, 1.0 / 3.0);
     loop {}
 }

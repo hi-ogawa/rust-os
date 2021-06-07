@@ -1,3 +1,4 @@
+use crate::lazy_static;
 use core::fmt;
 use core::ptr;
 
@@ -26,7 +27,6 @@ pub enum Color {
 
 const BUFFER_WIDTH: isize = 80;
 const BUFFER_HEIGHT: isize = 25;
-const BUFFER_ADDRESS: usize = 0xb8000;
 
 pub fn make_code(character: u8, foreground: Color, background: Color) -> u16 {
     ((background as u16) << 12) | ((foreground as u16) << 8) | (character as u16)
@@ -41,6 +41,16 @@ pub struct Writer {
 }
 
 impl Writer {
+    pub fn new(data: *mut u16, foreground: Color, background: Color) -> Self {
+        Self {
+            data,
+            foreground,
+            background,
+            x: 0,
+            y: 0,
+        }
+    }
+
     pub fn clear(&mut self) {
         for x in 0..BUFFER_WIDTH {
             for y in 0..BUFFER_HEIGHT {
@@ -116,17 +126,12 @@ impl fmt::Write for Writer {
     }
 }
 
-// Global instance as mutable static
-pub static mut WRITER: Writer = Writer {
-    x: 0,
-    y: 0,
-    data: BUFFER_ADDRESS as *mut u16,
-    foreground: Color::Gray,
-    background: Color::Black,
-};
-
-pub fn clear_screen() {
-    unsafe { WRITER.clear() }
+lazy_static! {
+    pub static mut WRITER : Writer = {
+        let mut writer = Writer::new(0xb8000 as *mut u16, Color::Gray, Color::Black);
+        writer.clear();
+        writer
+    };
 }
 
 #[macro_export]

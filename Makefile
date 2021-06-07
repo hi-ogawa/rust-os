@@ -27,6 +27,9 @@ $(kernel): src/boot/linker.ld src/boot/boot.asm cargo
 cargo:
 	cargo build --target target.json --example $(example)
 
+cargo-all:
+	cargo build --target target.json --examples
+
 clean:
 	@cargo clean
 	@rm -rf build

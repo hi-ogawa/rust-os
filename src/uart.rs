@@ -1,4 +1,5 @@
 use crate::asm::{inb, outb};
+use crate::lazy_static;
 use core::fmt;
 
 // cf. https://wiki.osdev.org/Serial_Ports
@@ -8,6 +9,10 @@ pub struct SerialPort {
 }
 
 impl SerialPort {
+    pub fn new(port: u16) -> Self {
+        Self { port }
+    }
+
     pub fn init(&mut self) {
         let p = self.port;
 
@@ -54,15 +59,12 @@ impl fmt::Write for SerialPort {
     }
 }
 
-const SERIAL_PORT_ADDRESS: u16 = 0x3F8;
-
-// Global instance as mutable static
-pub static mut SERIAL_PORT: SerialPort = SerialPort {
-    port: SERIAL_PORT_ADDRESS,
-};
-
-pub fn serial_init() {
-    unsafe { SERIAL_PORT.init() }
+lazy_static! {
+    pub static mut SERIAL: SerialPort = {
+        let mut serial = SerialPort { port: 0x3F8 };
+        serial.init();
+        serial
+    };
 }
 
 #[macro_export]
@@ -70,7 +72,7 @@ macro_rules! serial_print {
   ($($arg:tt)*) => ({
       use core::fmt::Write;
       unsafe {
-        $crate::uart::SERIAL_PORT.write_fmt(format_args!($($arg)*)).unwrap();
+        $crate::uart::SERIAL.write_fmt(format_args!($($arg)*)).unwrap();
       }
   });
 }

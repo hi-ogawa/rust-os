@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2018"
 
 [dependencies]
+paste = "1.0" # Macro with identifier concatenation
 
 [[example]]
 name = "dev"
@@ -19,4 +20,12 @@ crate-type = ["staticlib"]
 
 [[example]]
 name = "panic"
+crate-type = ["staticlib"]
+
+[[example]]
+name = "vga"
+crate-type = ["staticlib"]
+
+[[example]]
+name = "uart"
 crate-type = ["staticlib"]
