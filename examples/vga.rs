@@ -18,7 +18,7 @@ fn panic(_info: &PanicInfo) -> ! {
 //
 #[no_mangle]
 pub extern "C" fn kernel_main() -> ! {
-    let mut writer = Writer::new(0xb8000 as *mut u16, Color::White, Color::Blue);
+    let mut writer = unsafe { Writer::from_address(0xb8000, Color::White, Color::Blue) };
     writer.clear();
     write!(writer, "Hello {}", "World!").unwrap();
     loop {}

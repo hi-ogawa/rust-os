@@ -1,7 +1,6 @@
 #![no_std]
 
 use os::println;
-use os::qemu;
 use os::serial_println;
 
 //
@@ -22,6 +21,5 @@ fn panic(info: &PanicInfo) -> ! {
 pub extern "C" fn kernel_main() -> ! {
     println!("hello vga");
     serial_println!("hello serial");
-    qemu::exit(0);
     loop {}
 }

@@ -1,6 +1,6 @@
 use crate::lazy_static;
+use crate::util::{address_cast_mut, Volatile};
 use core::fmt;
-use core::ptr;
 
 // See the first row of https://en.wikipedia.org/wiki/File:VGA_palette_with_black_borders.svg
 #[repr(u8)]
@@ -25,30 +25,35 @@ pub enum Color {
     White,
 }
 
-const BUFFER_WIDTH: isize = 80;
-const BUFFER_HEIGHT: isize = 25;
+const BUFFER_WIDTH: usize = 80;
+const BUFFER_HEIGHT: usize = 25;
+type Buffer = [[Volatile<u16>; BUFFER_WIDTH]; BUFFER_HEIGHT];
 
 pub fn make_code(character: u8, foreground: Color, background: Color) -> u16 {
     ((background as u16) << 12) | ((foreground as u16) << 8) | (character as u16)
 }
 
 pub struct Writer {
-    x: isize,
-    y: isize,
-    data: *mut u16,
+    buffer: &'static mut Buffer,
     foreground: Color,
     background: Color,
+    x: usize,
+    y: usize,
 }
 
 impl Writer {
-    pub fn new(data: *mut u16, foreground: Color, background: Color) -> Self {
+    pub fn new(buffer: &'static mut Buffer, foreground: Color, background: Color) -> Self {
         Self {
-            data,
+            buffer,
             foreground,
             background,
             x: 0,
             y: 0,
         }
+    }
+
+    pub unsafe fn from_address(address: usize, foreground: Color, background: Color) -> Self {
+        Writer::new(address_cast_mut(address), foreground, background)
     }
 
     pub fn clear(&mut self) {
@@ -71,20 +76,13 @@ impl Writer {
         self.y -= 1;
     }
 
-    fn read_byte_at(&mut self, x: isize, y: isize) -> u8 {
-        assert!(0 <= x && x < BUFFER_WIDTH);
-        assert!(0 <= y && y < BUFFER_HEIGHT);
-        let code = unsafe { ptr::read_volatile(self.data.offset(BUFFER_WIDTH * y + x)) };
-        code as u8
+    fn read_byte_at(&mut self, x: usize, y: usize) -> u8 {
+        self.buffer[y][x].read() as u8
     }
 
-    fn write_byte_at(&mut self, c: u8, x: isize, y: isize) {
-        assert!(0 <= x && x < BUFFER_WIDTH);
-        assert!(0 <= y && y < BUFFER_HEIGHT);
+    fn write_byte_at(&mut self, c: u8, x: usize, y: usize) {
         let code = make_code(c, self.foreground, self.background);
-        unsafe {
-            ptr::write_volatile(self.data.offset(BUFFER_WIDTH * y + x), code);
-        }
+        self.buffer[y][x].write(code);
     }
 
     pub fn newline(&mut self) {
@@ -128,7 +126,7 @@ impl fmt::Write for Writer {
 
 lazy_static! {
     pub static mut WRITER : Writer = {
-        let mut writer = Writer::new(0xb8000 as *mut u16, Color::Gray, Color::Black);
+        let mut writer = Writer::from_address(0xb8000, Color::Gray, Color::Black);
         writer.clear();
         writer
     };

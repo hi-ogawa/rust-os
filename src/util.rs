@@ -1,4 +1,48 @@
 //
+// read_volatile/write_volatile
+//
+#[repr(C)]
+pub struct Volatile<T>(T);
+
+impl<T: Copy> Volatile<T> {
+    fn as_ptr(&self) -> *const T {
+        &self.0 as *const T
+    }
+
+    fn as_mut_ptr(&mut self) -> *mut T {
+        &mut self.0 as *mut T
+    }
+
+    pub fn read(&self) -> T {
+        unsafe { core::ptr::read_volatile(self.as_ptr()) }
+    }
+
+    pub fn write(&mut self, value: T) {
+        unsafe { core::ptr::write_volatile(self.as_mut_ptr(), value) }
+    }
+}
+
+//
+// reinterpret cast
+//
+
+pub unsafe fn address_cast<'a, T>(address: usize) -> &'a T {
+    &*(address as *const T)
+}
+
+pub unsafe fn address_cast_mut<'a, T>(address: usize) -> &'a mut T {
+    &mut *(address as *mut T)
+}
+
+pub unsafe fn reinterpret_cast<'a, T1, T2>(reference: &T1) -> &'a T2 {
+    &*((reference as *const T1) as *const T2)
+}
+
+pub unsafe fn reinterpret_cast_mut<'a, T1, T2>(reference: &mut T1) -> &'a mut T2 {
+    &mut *((reference as *mut T1) as *mut T2)
+}
+
+//
 // Simple but unsafe lazy_static
 //
 
