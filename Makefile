@@ -7,7 +7,7 @@ kernel := build/kernel.bin
 rust_kernel := target/target/debug/examples/lib$(example).a
 
 run: $(iso)
-	qemu-system-x86_64 -cdrom $(iso) -serial stdio -display $(qemu_display)
+	qemu-system-x86_64 -cdrom $(iso) -display $(qemu_display) -serial stdio -device isa-debug-exit
 
 iso: $(iso)
 
@@ -25,10 +25,7 @@ $(kernel): src/boot/linker.ld src/boot/boot.asm cargo
 	ld -n -o $(kernel) -T src/boot/linker.ld build/boot/boot.o $(rust_kernel)
 
 cargo:
-	cargo build --target target.json --example $(example)
-
-cargo-all:
-	cargo build --target target.json --examples
+	cargo build --example $(example)
 
 clean:
 	@cargo clean

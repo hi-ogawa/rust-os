@@ -9,9 +9,8 @@ RUN pacman --noconfirm -S \
   qemu-headless
 
 # Rust toolchain
-RUN rustup toolchain install nightly
+RUN rustup toolchain install nightly-2021-06-04
 RUN rustup component add rust-src
-RUN cargo search lazy_static > /dev/null
 
 # Copy repository
 RUN mkdir -p /app
@@ -20,4 +19,5 @@ WORKDIR /app
 # Copy the main source
 COPY . ./
 
-RUN make cargo-all
+# Build
+RUN cargo build --examples

@@ -29,3 +29,7 @@ crate-type = ["staticlib"]
 [[example]]
 name = "uart"
 crate-type = ["staticlib"]
+
+[[example]]
+name = "qemu"
+crate-type = ["staticlib"]
