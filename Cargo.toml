@@ -33,3 +33,7 @@ crate-type = ["staticlib"]
 [[example]]
 name = "qemu"
 crate-type = ["staticlib"]
+
+[[example]]
+name = "idt"
+crate-type = ["staticlib"]

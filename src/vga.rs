@@ -4,7 +4,7 @@ use core::fmt;
 
 // See the first row of https://en.wikipedia.org/wiki/File:VGA_palette_with_black_borders.svg
 #[repr(u8)]
-#[derive(Debug, Copy, Clone, Hash)]
+#[derive(Debug, Copy, Clone)]
 #[allow(dead_code)]
 pub enum Color {
     Black = 0,

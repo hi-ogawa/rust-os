@@ -42,3 +42,19 @@ pub fn outl(port: u16, value: u32) {
         llvm_asm!("out %eax, %dx" : : "{eax}" (value), "{dx}" (port) : : "volatile");
     }
 }
+
+// lidt
+pub fn lidt<T>(ptr: *const T) {
+    // HACK: Use u128 to refer to idt pointer which is 10 bytes
+    let ptr = ptr as *const u128;
+    unsafe {
+        llvm_asm!("lidt $0" : : "m"(*ptr));
+    }
+}
+
+// int3
+pub fn int3() {
+    unsafe {
+        llvm_asm!("int3");
+    }
+}

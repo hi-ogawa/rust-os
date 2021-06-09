@@ -5,5 +5,6 @@ use crate::asm::outl;
 const EXIT_PORT: u16 = 0x501;
 
 pub fn exit(value: u32) {
+    // qemu will exit with (value << 1) | 1
     outl(EXIT_PORT, value);
 }

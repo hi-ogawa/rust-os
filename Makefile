@@ -1,5 +1,6 @@
+# Options
 example := dev
-qemu_display := gtk
+qemu_options := # e.g. -display none -d int -no-reboot
 
 iso := build/os.iso
 isodir := build/isodir
@@ -7,7 +8,7 @@ kernel := build/kernel.bin
 rust_kernel := target/target/debug/examples/lib$(example).a
 
 run: $(iso)
-	qemu-system-x86_64 -cdrom $(iso) -display $(qemu_display) -serial stdio -device isa-debug-exit
+	qemu-system-x86_64 -cdrom $(iso) -serial stdio -device isa-debug-exit $(qemu_options)
 
 iso: $(iso)
 
