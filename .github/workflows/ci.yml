@@ -1,0 +1,10 @@
+name: CI
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker-compose run dev cargo build --examples
+      - run: docker-compose run dev make run example=dev qemu_options="-display none"
+      - run: docker-compose run dev cargo fmt -- --check

@@ -11,7 +11,7 @@ fn panic(_info: &core::panic::PanicInfo) -> ! {
 #[no_mangle]
 pub extern "C" fn kernel_main() -> ! {
     serial_println!("before exit");
-    qemu::exit(0);
+    qemu::exit_success();
     serial_println!("after exit");
     loop {}
 }

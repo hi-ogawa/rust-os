@@ -6,6 +6,7 @@ use os::asm::int3;
 use os::idt::{IdtIndex, IsrArg, IDT};
 use os::make_isr;
 use os::println;
+use os::qemu;
 use os::serial_println;
 
 //
@@ -36,6 +37,7 @@ pub extern "C" fn kernel_main() -> ! {
     int3();
     serial_println!("AFTER int3");
 
+    qemu::exit_success();
     loop {}
 }
 

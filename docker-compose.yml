@@ -1,0 +1,11 @@
+version: "3.7"
+
+services:
+  dev:
+    image: hiogawa/rust-os-deps
+    volumes:
+      - ./:/app
+      - dot_cargo:/root/.cargo
+
+volumes:
+  dot_cargo:

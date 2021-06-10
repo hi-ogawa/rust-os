@@ -8,12 +8,15 @@ Misc
 
 ```
 # Rust toolchain
-$ rustc --version
-rustc 1.54.0-nightly (c79419af0 2021-06-04)
+$ rustup default
+nightly-2021-06-09-x86_64-unknown-linux-gnu (default)
 
 # Run in docker
-$ docker build -t hiogawa/rust-os .
-$ docker run -it --rm hiogawa/rust-os make run example=uart qemu_options="-display none"
+# -- build base image --
+$ docker build -t hiogawa/rust-os-deps - < Dockerfile
+$ docker push hiogawa/rust-os-deps
+# -- run --
+$ docker-compose run dev bash
 ```
 
 References

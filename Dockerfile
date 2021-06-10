@@ -9,15 +9,8 @@ RUN pacman --noconfirm -S \
   qemu-headless
 
 # Rust toolchain
-RUN rustup toolchain install nightly-2021-06-04
+RUN rustup toolchain install nightly-2021-06-09
 RUN rustup component add rust-src
 
-# Copy repository
 RUN mkdir -p /app
 WORKDIR /app
-
-# Copy the main source
-COPY . ./
-
-# Build
-RUN cargo build --examples

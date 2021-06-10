@@ -50,7 +50,7 @@ pub extern "C" fn kernel_main() -> ! {
     }
     serial_println!("AFTER page fault");
 
-    qemu::exit(1);
+    qemu::exit_success();
     loop {}
 }
 
