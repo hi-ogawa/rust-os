@@ -58,3 +58,12 @@ pub fn int3() {
         llvm_asm!("int3");
     }
 }
+
+// cr2
+pub fn read_cr2() -> u64 {
+    let value: u64;
+    unsafe {
+        llvm_asm!("mov %cr2, $0" : "=r"(value));
+    }
+    value
+}
