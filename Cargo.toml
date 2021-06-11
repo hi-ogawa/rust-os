@@ -41,3 +41,7 @@ crate-type = ["staticlib"]
 [[example]]
 name = "pic"
 crate-type = ["staticlib"]
+
+[[example]]
+name = "keyboard"
+crate-type = ["staticlib"]

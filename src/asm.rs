@@ -66,6 +66,12 @@ pub fn sti() {
     }
 }
 
+pub fn hlt() {
+    unsafe {
+        llvm_asm!("hlt");
+    }
+}
+
 // cr2
 pub fn read_cr2() -> u64 {
     let value: u64;

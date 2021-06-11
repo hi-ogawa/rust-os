@@ -5,6 +5,7 @@
 
 pub mod asm;
 pub mod idt;
+pub mod keyboard;
 pub mod pic;
 pub mod qemu;
 pub mod uart;

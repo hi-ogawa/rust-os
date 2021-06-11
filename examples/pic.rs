@@ -23,7 +23,7 @@ pub extern "C" fn kernel_main() -> ! {
     idt.load();
     pic.init();
 
-    // Set handler for breakpoint exception
+    // Set handlers
     idt.set_handler(IdtIndex::Breakpoint, make_isr!(breakpoint_handler));
     idt.set_irq_handler(PicIndex::Timer as u8, make_isr!(timer_handler));
 
