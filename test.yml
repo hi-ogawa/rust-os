@@ -36,3 +36,8 @@
   command: make -s run example=uart qemu_options='-display none' cargo_options='--features os-test'
   stdout: |
     Hello World!
+
+- name: double_fault
+  command: make -s run example=double_fault qemu_options='-display none' cargo_options='--features os-test'
+  stdout: |
+    DOUBLE_FAULT: error_code = 0

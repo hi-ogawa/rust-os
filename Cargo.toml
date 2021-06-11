@@ -50,3 +50,7 @@ crate-type = ["staticlib"]
 [[example]]
 name = "keyboard"
 crate-type = ["staticlib"]
+
+[[example]]
+name = "double_fault"
+crate-type = ["staticlib"]
