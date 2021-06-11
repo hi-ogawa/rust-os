@@ -1,12 +1,13 @@
 FROM archlinux:base-devel-20210530.0.24217
 
 # Dependencies
-RUN pacman --noconfirm -Syu
-RUN pacman --noconfirm -S \
+RUN pacman --noconfirm -Sy && \
+    pacman --noconfirm -S \
   rustup \
   grub libisoburn mtools \
   yasm \
-  qemu-headless
+  qemu-headless \
+  python python-yaml
 
 # Rust toolchain
 RUN rustup toolchain install nightly-2021-06-09

@@ -1,6 +1,7 @@
 #![no_std]
 
-use os::println;
+use os::qemu;
+use os::serial_println;
 
 //
 // Panic handler
@@ -8,8 +9,7 @@ use os::println;
 use core::panic::PanicInfo;
 
 #[panic_handler]
-fn panic(info: &PanicInfo) -> ! {
-    println!("{}", info);
+fn panic(_info: &PanicInfo) -> ! {
     loop {}
 }
 
@@ -18,6 +18,7 @@ fn panic(info: &PanicInfo) -> ! {
 //
 #[no_mangle]
 pub extern "C" fn kernel_main() -> ! {
-    println!("{} / {} = {}", 1, 3, 1.0 / 3.0);
+    serial_println!("{} / {} = {}", 1, 3, 1.0 / 3.0);
+    qemu::exit_success();
     loop {}
 }

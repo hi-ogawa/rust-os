@@ -19,6 +19,7 @@ pub extern "C" fn kernel_main() -> ! {
     let mut idt = Idt::new();
 
     // idt address
+    #[cfg(not(feature = "os-test"))]
     serial_println!("IDT address {:x}", idt.offset());
 
     // lidt
@@ -49,7 +50,6 @@ pub extern "C" fn kernel_main() -> ! {
     }
     serial_println!("AFTER page fault");
 
-    qemu::exit_success();
     loop {}
 }
 
@@ -72,5 +72,6 @@ extern "C" fn page_fault_handler(arg: &IsrArg) {
         { arg.error_code },
         read_cr2()
     );
-    panic!("Cannot return from page fault");
+    // Cannot return from page fault since this would return to the same faulting instruction
+    qemu::exit_success();
 }

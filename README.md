@@ -1,12 +1,12 @@
 OS
 
 ```
-make run
-```
+# Run example
+make run example=dev
 
-Misc
+# Testing
+python test.py -k dev -v
 
-```
 # Rust toolchain
 $ rustup default
 nightly-2021-06-09-x86_64-unknown-linux-gnu (default)
@@ -16,7 +16,7 @@ nightly-2021-06-09-x86_64-unknown-linux-gnu (default)
 $ docker build -t hiogawa/rust-os-deps - < Dockerfile
 $ docker push hiogawa/rust-os-deps
 # -- run --
-$ docker-compose run dev bash
+$ docker-compose run dev make run example=dev qemu_options='-display none'
 ```
 
 References

@@ -6,5 +6,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: docker-compose run dev cargo build --examples
-      - run: docker-compose run dev make run example=dev qemu_options="-display none"
+      - run: docker-compose run dev python test.py -v
       - run: docker-compose run dev cargo fmt -- --check

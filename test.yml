@@ -1,0 +1,38 @@
+- name: dev
+  command: make -s run example=dev qemu_options='-display none' cargo_options='--features os-test'
+  stdout: |
+    hello serial
+    BEFORE int3
+    BREAKPOINT: error_code = 0
+    AFTER int3
+
+- name: idt
+  command: make -s run example=idt qemu_options='-display none' cargo_options='--features os-test'
+  stdout: |
+    BEFORE `idt.load`
+    AFTER `idt.load`
+    BEFORE `int3` (1)
+    BREAKPOINT: error_code = 0, counter = 1
+    AFTER `int3` (1)
+    BEFORE `int3` (2)
+    BREAKPOINT: error_code = 0, counter = 2
+    AFTER `int3` (2)
+    BEFORE page fault
+    PAGE_FAULT: error_code = 2, cr2 = 0xdeadbeaf
+
+- name: panic
+  command: make -s run example=panic qemu_options='-display none' cargo_options='--features os-test'
+  stdout: |
+    panicked at 'assertion failed: `(left == right)`
+      left: `3`,
+     right: `0`', examples/panic.rs:23:5
+
+- name: fmt
+  command: make -s run example=fmt qemu_options='-display none' cargo_options='--features os-test'
+  stdout: |
+    1 / 3 = 0.3333333333333333
+
+- name: uart
+  command: make -s run example=uart qemu_options='-display none' cargo_options='--features os-test'
+  stdout: |
+    Hello World!

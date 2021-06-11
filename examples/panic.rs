@@ -1,5 +1,6 @@
 #![no_std]
 
+use os::qemu;
 use os::serial_println;
 
 //
@@ -10,6 +11,7 @@ use core::panic::PanicInfo;
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     serial_println!("{}", info);
+    qemu::exit_success();
     loop {}
 }
 

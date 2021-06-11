@@ -1,5 +1,6 @@
 # Options
 example := dev
+cargo_options := # e.g. --features os-test
 qemu_options := # e.g. -display none -d int -no-reboot
 qemu_success := 123
 
@@ -27,7 +28,7 @@ $(kernel): src/boot/linker.ld src/boot/boot.asm cargo
 	ld -n -o $(kernel) -T src/boot/linker.ld build/boot/boot.o $(rust_kernel)
 
 cargo:
-	cargo build --example $(example)
+	cargo build --example $(example) $(cargo_options)
 
 clean:
 	@cargo clean
