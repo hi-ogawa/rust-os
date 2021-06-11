@@ -117,74 +117,64 @@ impl Idt {
     }
 }
 
-// Duplicate is necessary since "naked functions must contain a single asm block"
-// TODO: maybe we can use jmp with global_asm!
+#[macro_export]
+macro_rules! make_isr__intro {
+    () => {
+        asm!(
+            "
+            # Save registers
+            push rsp; push rax; push rcx; push rdx; push rbx; push rsi; push rdi; push rbp
+            push r8; push r9; push r10; push r11; push r12; push r13; push r14; push r15
+
+            # System V calling convention
+            # Make 1st argument a pointer to stack, which is all the data pushed so far (registers, index, error_code)
+            mov rdi, rsp
+            "
+        )
+    }
+}
+
+#[macro_export]
+macro_rules! make_isr__outro {
+    () => {
+        asm!(
+            "
+            # Restore registers
+            pop r15; pop r14; pop r13; pop r12; pop r11; pop r10; pop r9; pop r8
+            pop rbp; pop rdi; pop rsi; pop rbx; pop rdx; pop rcx; pop rax; pop rsp
+
+            # Deallocate error code
+            add rsp, 8
+            iretq
+            "
+        )
+    };
+}
+
 #[macro_export]
 macro_rules! make_isr {
     ($function:ident) => {{
         #[naked]
+        #[allow(unsupported_naked_functions)] // multiple asm blocks in single naked function will be deprecated...
         extern "C" fn wrapper() {
             unsafe {
-                asm!(
-                    "
-                    # Allocate error code manually
-                    push 0
-
-                    # Save registers
-                    push rsp; push rax; push rcx; push rdx; push rbx; push rsi; push rdi; push rbp
-                    push r8; push r9; push r10; push r11; push r12; push r13; push r14; push r15
-
-                    # System V calling convention
-                    # Make 1st argument a pointer to stack, which is all the data pushed so far (registers, index, error_code)
-                    mov rdi, rsp
-                    call {0}
-
-                    # Restore registers
-                    pop r15; pop r14; pop r13; pop r12; pop r11; pop r10; pop r9; pop r8
-                    pop rbp; pop rdi; pop rsi; pop rbx; pop rdx; pop rcx; pop rax; pop rsp
-
-                    # Deallocate error code
-                    add rsp, 8
-                    iretq
-                    ",
-                    sym $function,
-                    options(noreturn)
-                );
+                asm!("push 0"); // Allocate error code manually
+                $crate::make_isr__intro!();
+                asm!("call {0}", sym $function);
+                $crate::make_isr__outro!();
             }
         }
         wrapper
     }};
 
-    // Only difference is "Allocate error code manually"
     ($function:ident, has_error_code) => {{
         #[naked]
+        #[allow(unsupported_naked_functions)]
         extern "C" fn wrapper() {
             unsafe {
-                asm!(
-                    "
-                    # DO NOT allocate error code
-                    # push 0
-
-                    # Save registers
-                    push rsp; push rax; push rcx; push rdx; push rbx; push rsi; push rdi; push rbp
-                    push r8; push r9; push r10; push r11; push r12; push r13; push r14; push r15
-
-                    # System V calling convention
-                    # Make 1st argument a pointer to stack, which is all the data pushed so far (registers, index, error_code)
-                    mov rdi, rsp
-                    call {0}
-
-                    # Restore registers
-                    pop r15; pop r14; pop r13; pop r12; pop r11; pop r10; pop r9; pop r8
-                    pop rbp; pop rdi; pop rsi; pop rbx; pop rdx; pop rcx; pop rax; pop rsp
-
-                    # Deallocate error code
-                    add rsp, 8
-                    iretq
-                    ",
-                    sym $function,
-                    options(noreturn)
-                );
+                $crate::make_isr__intro!();
+                asm!("call {0}", sym $function);
+                $crate::make_isr__outro!();
             }
         }
         wrapper
