@@ -96,15 +96,29 @@ impl Idt {
             offset1: ptr as u16,
             offset2: (ptr >> 16) as u16,
             offset3: (ptr >> 32) as u32,
-            type_attr: 0x8F, // = flag (present + trap gate) (TODO: 0x8E for interrupt gate?)
+            type_attr: 0x8F, // = flag (present + trap gate)
             selector: 8,     // = first segment (gdt64.code in boot.asm)
             ist: 0,          // TODO: separate stack to prevent triple fault?
+            zero: 0,
+        };
+    }
+
+    pub fn set_irq_handler(&mut self, index: u8, handler: IdtHandler) {
+        let ptr = handler as *const char as u64;
+        self.entries[index as usize] = IdtEntry {
+            offset1: ptr as u16,
+            offset2: (ptr >> 16) as u16,
+            offset3: (ptr >> 32) as u32,
+            type_attr: 0x8E, // = flag (present + interrupt gate)
+            selector: 8,     // = first segment (gdt64.code in boot.asm)
+            ist: 0,
             zero: 0,
         };
     }
 }
 
 // Duplicate is necessary since "naked functions must contain a single asm block"
+// TODO: maybe we can use jmp with global_asm!
 #[macro_export]
 macro_rules! make_isr {
     ($function:ident) => {{
@@ -113,9 +127,6 @@ macro_rules! make_isr {
             unsafe {
                 asm!(
                     "
-                    # Clear interrupt
-                    cli
-
                     # Allocate error code manually
                     push 0
 
@@ -151,9 +162,6 @@ macro_rules! make_isr {
             unsafe {
                 asm!(
                     "
-                    # Clear interrupt
-                    cli
-
                     # DO NOT allocate error code
                     # push 0
 

@@ -5,6 +5,7 @@
 
 pub mod asm;
 pub mod idt;
+pub mod pic;
 pub mod qemu;
 pub mod uart;
 pub mod util;

@@ -37,3 +37,7 @@ crate-type = ["staticlib"]
 [[example]]
 name = "idt"
 crate-type = ["staticlib"]
+
+[[example]]
+name = "pic"
+crate-type = ["staticlib"]
