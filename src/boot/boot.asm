@@ -22,7 +22,8 @@ p3_table:
   resb 1 << 12
 p2_table:
   resb 1 << 12
-
+p1_tables: ; p1_table x 2^9
+  resb 1 << 21
 
 ; GDT
 section .rodata
@@ -116,9 +117,10 @@ check_long_mode:
   call print_error
 
 
-; Setup 1GB identity map with 2MB huge page
+; Setup 1GB identity map
+; 1 x 1 x 2^9 x 2^9 = 2^18 pages = 2^18 x 2^12 bytes
 setup_page_tables:
-  ; chain first entry p4 -> p3 -> p2
+  ; Chain first entry p4 -> p3 -> p2
   mov eax, p2_table
   or eax, (1 << 0 | 1 << 1) ; flag (writable + present)
   mov [p3_table], eax
@@ -127,16 +129,31 @@ setup_page_tables:
   or eax, (1 << 0 | 1 << 1)
   mov [p4_table], eax
 
-  ; 2MB huge page x 512 on p2 table ( for i in 0..512 { p2[i] = i * 2MB | flag } )
+  ; loop p2 entries
   mov ecx, 0
 .p2_loop:
-  mov eax, 1 << 21
+  ; eax = (p1_tables + 2^12 * ecx) | 0b11
+  mov eax, 1 << 12
   mul ecx
-  or eax, (1 << 0 | 1 << 1 | 1 << 7); flag (huge page + writable + present)
+  add eax, p1_tables
+  or eax, (1 << 0 | 1 << 1)
   mov [p2_table + 8 * ecx], eax
   add ecx, 1
-  cmp ecx, 512
+  cmp ecx, (1 << 9)
   jne .p2_loop
+
+  ; loop p1 entries
+  mov ecx, 0
+.p1_loop:
+  ; eax = 2^12 * ecx | 0b11
+  mov eax, 1 << 12
+  mul ecx
+  or eax, (1 << 0 | 1 << 1)
+  mov [p1_tables + 8 * ecx], eax
+  add ecx, 1
+  cmp ecx, (1 << 18)
+  jne .p1_loop
+
   ret
 
 
