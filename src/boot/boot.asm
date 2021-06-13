@@ -1,10 +1,34 @@
-; Multiboot header (cf. https://www.gnu.org/software/grub/manual/multiboot/multiboot.html)
+; (NOT USED) Multiboot header (cf. https://www.gnu.org/software/grub/manual/multiboot/multiboot.html)
+MB_MAGIC equ 0x1BADB002
+MB_FLAGS equ (1 << 1)
+MB_START_EAX equ 0x2BADB002
+
 section .multiboot_header
 align 4
-dd 0x1BADB002
-dd 1 << 0 | 1 << 1
-dd - (0x1BADB002 + (1 << 0 | 1 << 1))
+dd MB_MAGIC
+dd MB_FLAGS
+dd - (MB_MAGIC + MB_FLAGS)
 
+
+; Multiboot2 header (cf. https://www.gnu.org/software/grub/manual/multiboot2/multiboot.html)
+MB2_MAGIC equ 0xE85250D6
+MB2_ARCH equ 0
+MB2_START_EAX equ 0x36d76289
+
+section .multiboot2_header
+align 4
+multiboot2_header:
+.start:
+; common header
+dd MB2_MAGIC
+dd MB2_ARCH
+dd .end - .start
+dd - (MB2_MAGIC + MB2_ARCH + .end - .start)
+; end tag
+dw 0
+dw 0
+dd 8
+.end:
 
 ; Stack
 section .kernel_stack
@@ -72,7 +96,7 @@ print_error:
 
 ; Verify multiboot loader has loaded this kernel by checking eax register
 check_multiboot:
-  cmp eax, 0x2BADB002
+  cmp eax, MB2_START_EAX
   jne .check_multiboot_fail
   ret
 .check_multiboot_fail:

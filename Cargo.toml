@@ -58,3 +58,7 @@ crate-type = ["staticlib"]
 [[example]]
 name = "multiboot"
 crate-type = ["staticlib"]
+
+[[example]]
+name = "multiboot2"
+crate-type = ["staticlib"]

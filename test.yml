@@ -42,19 +42,20 @@
   stdout: |
     DOUBLE_FAULT: error_code = 0
 
-- name: multiboot
-  command: make -s run example=multiboot qemu_options='-display none' cargo_options='--features os-test'
+- name: multiboot2
+  command: make -s run example=multiboot2 qemu_options='-display none' cargo_options='--features os-test'
   stdout: |
-    sizeof(BootInfo) = 116
-    address = 0x00010000
-    flags = 0b1101001100111
-    framebuffer = (0xb8000, 80, 25)
-    mmap_addr = 65692
-    mmap_length = 144
-    mmap: addr = 0x00000000, length = 0x0009fc00, type = 1
-    mmap: addr = 0x0009fc00, length = 0x00000400, type = 2
-    mmap: addr = 0x000f0000, length = 0x00010000, type = 2
-    mmap: addr = 0x00100000, length = 0x07ee0000, type = 1
-    mmap: addr = 0x07fe0000, length = 0x00020000, type = 2
-    mmap: addr = 0xfffc0000, length = 0x00040000, type = 2
-    section: addr = 0x00100000
+    BootInfo { total_size: 1672, reserved: 0 }
+    Tag { type_: 21, size: 12 }
+    Tag { type_: 1, size: 9 }
+    Tag { type_: 2, size: 18 }
+    Tag { type_: 10, size: 28 }
+    Tag { type_: 6, size: 160 }
+    Tag { type_: 9, size: 1300 }
+    Tag { type_: 4, size: 16 }
+    Tag { type_: 5, size: 20 }
+    Tag { type_: 8, size: 32 }
+    Tag { type_: 14, size: 28 }
+    FramebufferTag { type_: 8, size: 32, addr: 753664, pitch: 160, width: 80, height: 25, bpp: 16, type2_: 2 }
+    memory map (3): address = 0x00100000
+    section header (1): address = 0x00100000

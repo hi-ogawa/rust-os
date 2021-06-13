@@ -64,6 +64,7 @@ pub struct SectionHeadersInfo {
     pub shndx: u32,
 }
 
+// cf. https://en.wikipedia.org/wiki/Executable_and_Linkable_Format#Section_header
 #[repr(C)]
 #[repr(packed)]
 #[derive(Debug, Copy, Clone, Default)]
@@ -86,6 +87,19 @@ pub struct SectionHeaderIterator {
 }
 
 impl BootInfo {
+    pub fn memory_usage(&self) -> (u64, u64) {
+        let x0 = self as *const _ as usize;
+        let x1 = x0 + core::mem::size_of::<BootInfo>();
+        let y0 = self.mmap_addr;
+        let y1 = y0 + self.mmap_length;
+        let z0 = self.syms[2];
+        let z1 = z0 + self.syms[0] * self.syms[1];
+        (
+            *[x0 as u64, y0 as u64, z0 as u64].iter().min().unwrap(),
+            *[x1 as u64, y1 as u64, z1 as u64].iter().max().unwrap(),
+        )
+    }
+
     pub fn memory_maps(&self) -> MemoryMapInfoIterator {
         assert!(self.flags & FLAG_MEMORY_MAP != 0);
         MemoryMapInfoIterator {
@@ -98,7 +112,7 @@ impl BootInfo {
     pub fn section_headers(&self) -> SectionHeaderIterator {
         assert!(self.flags & FLAG_ELF_SECTION != 0);
         let info = unsafe { *(&{ self.syms } as *const _ as *const SectionHeadersInfo) };
-        assert!(info.size == 64);
+        assert!(info.size as usize == core::mem::size_of::<SectionHeader>());
         SectionHeaderIterator { info, count: 0 }
     }
 }

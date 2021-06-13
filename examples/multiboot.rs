@@ -1,3 +1,5 @@
+// This example doesn't work anymore since we switched to multiboot2
+
 #![no_std]
 
 use os::multiboot::BootInfo;
@@ -27,8 +29,8 @@ pub extern "C" fn kernel_main(boot_info: &BootInfo) -> ! {
         { boot_info.framebuffer_height }
     );
 
-    serial_println!("mmap_addr = {}", { boot_info.mmap_addr });
-    serial_println!("mmap_length = {}", { boot_info.mmap_length });
+    serial_println!("mmap_addr = 0x{:08x}", { boot_info.mmap_addr });
+    serial_println!("mmap_length = 0x{:08x}", { boot_info.mmap_length });
     for mmap in boot_info.memory_maps() {
         serial_println!(
             "mmap: addr = 0x{:08x}, length = 0x{:08x}, type = {}",
@@ -64,6 +66,13 @@ pub extern "C" fn kernel_main(boot_info: &BootInfo) -> ! {
             .unwrap();
         serial_println!("kernel: [0x{:08x}, 0x{:08x}]", kernel_start, kernel_end);
     }
+
+    let (boot_info_start, boot_info_end) = boot_info.memory_usage();
+    serial_println!(
+        "boot_info: [0x{:08x}, 0x{:08x}]",
+        boot_info_start,
+        boot_info_end
+    );
 
     qemu::exit_success();
     loop {}
