@@ -54,3 +54,7 @@ crate-type = ["staticlib"]
 [[example]]
 name = "double_fault"
 crate-type = ["staticlib"]
+
+[[example]]
+name = "multiboot"
+crate-type = ["staticlib"]

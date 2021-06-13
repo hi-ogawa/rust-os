@@ -44,6 +44,9 @@ start:
   ; Initialize stack pointer
   mov esp, stack_top
 
+  ; Move multiboot info to edi, which becomes 1st argument for `kernel_main`
+  mov edi, ebx
+
   ; Check boot loader and cpu
   call check_multiboot
   call check_cpuid
@@ -193,6 +196,7 @@ start_long_mode:
   mov gs, ax
 
   ; Call Rust entrypoint
+  ; (1st argument is a pointer to multiboot information, see "mov edi, ebx" in "start")
   extern kernel_main
   call kernel_main
 

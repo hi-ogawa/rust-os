@@ -5,6 +5,8 @@ import os.path
 
 
 class Test(unittest.TestCase):
+    maxDiff = None
+
     @classmethod
     def define_cases(cls, cases):
         for case in cases:

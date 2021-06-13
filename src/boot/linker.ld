@@ -6,17 +6,20 @@ SECTIONS {
     .text :
     {
         *(.multiboot_header) /* header at the beginning */
-        *(.text)
+        *(.text .text.*)
     }
 
-    .rodata :
-    {
-        *(.rodata)
+    .rodata : {
+        *(.rodata .rodata.*)
+    }
+
+    .data.rel.ro : {
+        *(.data.rel.ro.local*) *(.data.rel.ro .data.rel.ro.*)
     }
 
     .bss :
     {
-        *(.bss)
+        *(.bss .bss.*)
         *(.kernel_stack) /* stack at the end */
     }
 }
