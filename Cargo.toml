@@ -62,3 +62,7 @@ crate-type = ["staticlib"]
 [[example]]
 name = "multiboot2"
 crate-type = ["staticlib"]
+
+[[example]]
+name = "frame_allocator"
+crate-type = ["staticlib"]

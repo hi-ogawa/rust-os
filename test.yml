@@ -59,3 +59,39 @@
     FramebufferTag { type_: 8, size: 32, addr: 753664, pitch: 160, width: 80, height: 25, bpp: 16, type2_: 2 }
     memory map (3): address = 0x00100000
     section header (1): address = 0x00100000
+
+- name: frame_allocator
+  command: make -s run example=frame_allocator qemu_options='-display none' cargo_options='--features os-test'
+  stdout: |
+    0
+    2000
+    3000
+    4000
+    5000
+    6000
+    7000
+    8000
+    9000
+    10000
+    11000
+    12000
+    13000
+    14000
+    15000
+    16000
+    17000
+    18000
+    19000
+    20000
+    21000
+    22000
+    23000
+    24000
+    25000
+    26000
+    27000
+    28000
+    29000
+    30000
+    31000
+    32000

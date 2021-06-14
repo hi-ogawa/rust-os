@@ -59,9 +59,14 @@ pub extern "C" fn kernel_main(boot_info: &BootInfo) -> ! {
             });
         }
 
+        serial_println!("usable memory");
+        for (lo, hi) in boot_info.usable_memory() {
+            serial_println!("   (0x{:08x}, 0x{:08x})", lo, hi);
+        }
+
         serial_println!("occupied memory");
-        for (start, end) in boot_info.occupied_memory() {
-            serial_println!("   (0x{:08x}, 0x{:08x})", start, end);
+        for (lo, hi) in boot_info.occupied_memory() {
+            serial_println!("   (0x{:08x}, 0x{:08x})", lo, hi);
         }
     }
 

@@ -190,7 +190,7 @@ impl BootInfo {
         })
     }
 
-    pub fn occupied_memory(&self) -> [(u64, u64); 2] {
+    pub fn occupied_memory(&self) -> impl Iterator<Item = (u64, u64)> + Clone {
         let x0 = self as *const _ as u64;
         let x1 = x0 + (self.total_size as u64);
         let section_headers = self.section_headers().unwrap().filter(|m| m.size > 0);
@@ -200,6 +200,13 @@ impl BootInfo {
             .map(|m| m.addr + m.size)
             .max()
             .unwrap();
-        [(x0, x1), (y0, y1)]
+        crate::util::OwnedArrayIterator::new([(x0, x1), (y0, y1)])
+    }
+
+    pub fn usable_memory(&self) -> impl Iterator<Item = (u64, u64)> + Clone {
+        self.memory_map()
+            .unwrap()
+            .filter(|m| m.type_ == 1)
+            .map(|m| (m.base_addr, m.base_addr + m.length))
     }
 }

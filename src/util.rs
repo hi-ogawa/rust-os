@@ -1,4 +1,34 @@
 //
+// Owned array iterator
+//
+
+#[derive(Debug, Copy, Clone)]
+pub struct OwnedArrayIterator<T: Sized + Copy, const N: usize> {
+    inner: [T; N],
+    index: usize,
+}
+
+impl<T: Sized + Copy, const N: usize> OwnedArrayIterator<T, N> {
+    pub fn new(inner: [T; N]) -> Self {
+        Self { inner, index: 0 }
+    }
+}
+
+impl<T: Sized + Copy, const N: usize> Iterator for OwnedArrayIterator<T, N> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.index < N {
+            let item = self.inner[self.index];
+            self.index += 1;
+            Some(item)
+        } else {
+            None
+        }
+    }
+}
+
+//
 // read_volatile/write_volatile
 //
 #[repr(C)]
