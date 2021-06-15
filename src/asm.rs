@@ -80,3 +80,11 @@ pub fn read_cr2() -> u64 {
     }
     value
 }
+
+// flush tlb
+pub fn flush_tlb() {
+    unsafe {
+        llvm_asm!("mov %cr3, %rax");
+        llvm_asm!("mov %rax, %cr3");
+    }
+}

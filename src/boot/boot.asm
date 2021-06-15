@@ -40,6 +40,7 @@ stack_top:
 ; Page table
 section .bss
 align 1 << 12
+page_tables_start:
 p4_table:
   resb 1 << 12
 p3_table:
@@ -48,6 +49,7 @@ p2_table:
   resb 1 << 12
 p1_tables: ; p1_table x 2^9
   resb 1 << 21
+page_tables_end:
 
 ; GDT
 section .rodata
@@ -144,9 +146,18 @@ check_long_mode:
   call print_error
 
 
-; Setup 1GB identity map
+; Setup 1GB identity map with recursive entry
 ; 1 x 1 x 2^9 x 2^9 = 2^18 pages = 2^18 x 2^12 bytes
 setup_page_tables:
+  ; Initialize with zero
+  mov eax, 0
+  mov ecx, page_tables_start
+.zero_loop
+  mov [ecx], eax
+  add ecx, 4
+  cmp ecx, page_tables_end
+  jne .zero_loop
+
   ; Chain first entry p4 -> p3 -> p2
   mov eax, p2_table
   or eax, (1 << 0 | 1 << 1) ; flag (writable + present)
@@ -155,6 +166,11 @@ setup_page_tables:
   mov eax, p3_table
   or eax, (1 << 0 | 1 << 1)
   mov [p4_table], eax
+
+  ; Recursive entry
+  mov eax, p4_table
+  or eax, (1 << 0 | 1 << 1)
+  mov [p4_table + 8 * ((1 << 9) - 1)], eax
 
   ; loop p2 entries
   mov ecx, 0

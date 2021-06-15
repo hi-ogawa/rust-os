@@ -1,6 +1,6 @@
 #![no_std]
 
-use os::memory::FrameAllocator;
+use os::memory::{FrameAllocator, SimpleFrameAllocator};
 use os::multiboot2::BootInfo;
 use os::qemu;
 use os::serial_println;
@@ -27,7 +27,7 @@ pub extern "C" fn kernel_main(boot_info: &BootInfo) -> ! {
     }
 
     let mut frame_allocator =
-        FrameAllocator::new(boot_info.usable_memory(), boot_info.occupied_memory());
+        SimpleFrameAllocator::new(boot_info.usable_memory(), boot_info.occupied_memory());
     while let Some(index) = frame_allocator.allocate() {
         if index % 1000 == 0 {
             serial_println!("{}", index);

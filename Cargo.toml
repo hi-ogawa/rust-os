@@ -66,3 +66,11 @@ crate-type = ["staticlib"]
 [[example]]
 name = "frame_allocator"
 crate-type = ["staticlib"]
+
+[[example]]
+name = "page_table"
+crate-type = ["staticlib"]
+
+[[example]]
+name = "memory"
+crate-type = ["staticlib"]
