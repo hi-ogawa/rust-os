@@ -1,5 +1,6 @@
 use crate::asm::{inb, outb};
 use crate::lazy_static;
+use crate::util::Mutex;
 use core::fmt;
 
 // cf. https://wiki.osdev.org/Serial_Ports
@@ -60,21 +61,19 @@ impl fmt::Write for SerialPort {
 }
 
 lazy_static! {
-    pub static mut SERIAL: SerialPort = {
+    pub static ref SERIAL: Mutex<SerialPort> = {
         let mut serial = SerialPort { port: 0x3F8 };
         serial.init();
-        serial
+        Mutex::new(serial)
     };
 }
 
 #[macro_export]
 macro_rules! serial_print {
-  ($($arg:tt)*) => ({
-      use core::fmt::Write;
-      unsafe {
-        $crate::uart::SERIAL.write_fmt(format_args!($($arg)*)).unwrap();
-      }
-  });
+    ($($arg:tt)*) => ({
+        use core::fmt::Write;
+        $crate::uart::SERIAL.lock().write_fmt(format_args!($($arg)*)).unwrap();
+    });
 }
 
 #[macro_export]

@@ -28,10 +28,9 @@ pub extern "C" fn kernel_main() -> ! {
     println!("hello vga");
     serial_println!("hello serial");
 
-    unsafe {
-        IDT.load();
-        IDT.set_handler(IdtIndex::Breakpoint, make_isr!(breakpoint_handler));
-    }
+    IDT.lock().load();
+    IDT.lock()
+        .set_handler(IdtIndex::Breakpoint, make_isr!(breakpoint_handler));
 
     serial_println!("BEFORE int3");
     int3();

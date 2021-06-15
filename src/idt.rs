@@ -1,5 +1,6 @@
 use crate::asm::lidt;
 use crate::lazy_static;
+use crate::util::Mutex;
 
 // cf. https://wiki.osdev.org/IDT
 
@@ -184,8 +185,8 @@ macro_rules! make_isr {
 lazy_static! {
     // TODO:
     //   This doesn't work
-    //     { let mut idt = Idt::new(); idt.load(); idt }
+    //     { let mut idt = Idt::new(); idt.load(); Mutex::new(idt) }
     //   since idt.offset() changes during lazy_static.
     //   probably this is because of a bunch of undefined behaviours happening in my lazy static.
-    pub static mut IDT : Idt = Idt::new();
+    pub static ref IDT : Mutex<Idt> = Mutex::new(Idt::new());
 }

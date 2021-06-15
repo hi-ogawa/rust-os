@@ -23,13 +23,12 @@ pub extern "C" fn kernel_main(boot_info: &BootInfo) -> ! {
     //
     // Exception handler
     //
-    unsafe {
-        IDT.load();
-        IDT.set_handler(
-            IdtIndex::PageFault,
-            make_isr!(page_fault_handler, has_error_code),
-        );
-    }
+
+    IDT.lock().load();
+    IDT.lock().set_handler(
+        IdtIndex::PageFault,
+        make_isr!(page_fault_handler, has_error_code),
+    );
 
     //
     // Paging manipulation
@@ -59,10 +58,9 @@ pub extern "C" fn kernel_main(boot_info: &BootInfo) -> ! {
     unsafe {
         address_cast_mut::<Volatile<u8>>(address as usize).write(1);
     }
-    serial_println!(
-        "*0xdeadbeaf = {}",
+    serial_println!("*0xdeadbeaf = {}", unsafe {
         address_cast::<Volatile<u8>>(address as usize).read()
-    );
+    });
 
     serial_println!("BEFORE unmap_page");
     unmap_page(page);

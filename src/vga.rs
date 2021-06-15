@@ -1,4 +1,5 @@
 use crate::lazy_static;
+use crate::util::Mutex;
 use crate::util::{address_cast_mut, Volatile};
 use core::fmt;
 
@@ -125,21 +126,19 @@ impl fmt::Write for Writer {
 }
 
 lazy_static! {
-    pub static mut WRITER : Writer = {
-        let mut writer = Writer::from_address(0xb8000, Color::Gray, Color::Black);
+    pub static ref WRITER: Mutex<Writer> = {
+        let mut writer = unsafe { Writer::from_address(0xb8000, Color::Gray, Color::Black) };
         writer.clear();
-        writer
+        Mutex::new(writer)
     };
 }
 
 #[macro_export]
 macro_rules! print {
-  ($($arg:tt)*) => ({
-      use core::fmt::Write;
-      unsafe {
-        $crate::vga::WRITER.write_fmt(format_args!($($arg)*)).unwrap();
-      }
-  });
+    ($($arg:tt)*) => ({
+        use core::fmt::Write;
+        $crate::vga::WRITER.lock().write_fmt(format_args!($($arg)*)).unwrap();
+    });
 }
 
 #[macro_export]

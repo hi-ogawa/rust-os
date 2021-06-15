@@ -46,7 +46,7 @@ extern "C" fn timer_handler(arg: &IsrArg) {
     serial_println!(
         "TIMER: error_code = {}, counter = {}",
         { arg.error_code },
-        TIMER_COUNTER
+        unsafe { TIMER_COUNTER }
     );
     unsafe {
         TIMER_COUNTER += 1;

@@ -59,7 +59,7 @@ extern "C" fn breakpoint_handler(arg: &IsrArg) {
     serial_println!(
         "BREAKPOINT: error_code = {}, counter = {}",
         { arg.error_code },
-        COUNTER
+        unsafe { COUNTER }
     );
     unsafe {
         COUNTER += 1;

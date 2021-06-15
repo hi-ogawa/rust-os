@@ -8,8 +8,6 @@ edition = "2018"
 # Skip non-deterministic output for testing via `#[cfg(not(feature = "os-test"))]`
 os-test = []
 
-[dependencies]
-paste = "1.0" # Macro with identifier concatenation
 
 [[example]]
 name = "dev"
