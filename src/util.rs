@@ -79,7 +79,7 @@ pub unsafe fn reinterpret_cast_mut<'a, T1, T2>(reference: &mut T1) -> &'a mut T2
 pub struct Mutex<T>(T);
 
 impl<T> Mutex<T> {
-    pub fn new(inner: T) -> Self {
+    pub const fn new(inner: T) -> Self {
         Self(inner)
     }
 

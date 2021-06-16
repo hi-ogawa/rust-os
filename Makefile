@@ -28,7 +28,7 @@ $(kernel): src/boot/linker.ld src/boot/boot.asm cargo
 	ld -n -o $(kernel) -T src/boot/linker.ld build/boot/boot.o $(rust_kernel)
 
 cargo:
-	cargo build --example $(example) $(cargo_options)
+	cargo rustc --example $(example) $(cargo_options)
 
 clean:
 	@cargo clean

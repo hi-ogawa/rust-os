@@ -195,5 +195,68 @@ pub mod paging {
         let p2 = get_child_table(p3, page_p3_index(page)).unwrap();
         let p1 = get_child_table(p2, page_p2_index(page)).unwrap();
         p1[page_p1_index(page)] = 0;
+
+        // TODO: deallocate frame
+    }
+
+    pub fn map_page_range<'a, A: FrameAllocator>(start: Page, end: Page, allocator: &'a mut A) {
+        for page in start..end {
+            let frame = allocator.allocate().unwrap();
+            map_page_to_frame(page, frame, allocator);
+        }
+    }
+}
+
+pub mod heap_allocator {
+    use crate::util::Mutex;
+    use core::alloc::Layout;
+
+    pub struct SimpleHeapAllocator {
+        start: usize,
+        end: usize,
+    }
+
+    const ALLOC_ERROR: *mut u8 = core::ptr::null_mut();
+
+    fn ceil_align(addr: usize, align: usize) -> usize {
+        addr + (align - (addr % align)) % align
+    }
+
+    impl SimpleHeapAllocator {
+        pub const fn new(start: usize, end: usize) -> Self {
+            Self { start, end }
+        }
+
+        pub fn alloc(&mut self, layout: Layout) -> *mut u8 {
+            let start = ceil_align(self.start, layout.align());
+            let end = start + layout.size();
+            if self.end < end {
+                ALLOC_ERROR
+            } else {
+                self.start = end;
+                start as _
+            }
+        }
+    }
+
+    //
+    // Rust global allocator interface
+    //
+    use core::alloc::GlobalAlloc;
+
+    pub struct MutexSimpleHeapAllocator(Mutex<SimpleHeapAllocator>);
+
+    impl MutexSimpleHeapAllocator {
+        pub const fn new(start: usize, end: usize) -> Self {
+            Self(Mutex::new(SimpleHeapAllocator::new(start, end)))
+        }
+    }
+
+    unsafe impl GlobalAlloc for MutexSimpleHeapAllocator {
+        unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+            self.0.lock().alloc(layout)
+        }
+
+        unsafe fn dealloc(&self, _ptr: *mut u8, _layout: Layout) {}
     }
 }

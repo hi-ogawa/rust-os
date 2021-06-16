@@ -137,3 +137,13 @@
     AFTER unmap_page
     WRITE
     PAGE_FAULT: error_code = 2, cr2 = 0xdeadbeaf
+
+- name: heap_success
+  command: make -s run example=heap qemu_options='-display none'
+  stdout: |
+    sum = 4950
+
+- name: heap_fail
+  command: make -s run example=heap qemu_options='-display none' cargo_options='-- --cfg heap_fail'
+  stdout: |
+    alloc_error: Layout { size_: 80000, align_: 8 }

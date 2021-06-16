@@ -72,3 +72,7 @@ crate-type = ["staticlib"]
 [[example]]
 name = "memory"
 crate-type = ["staticlib"]
+
+[[example]]
+name = "heap"
+crate-type = ["staticlib"]
