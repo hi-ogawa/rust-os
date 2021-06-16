@@ -14,17 +14,17 @@ fn panic(info: &core::panic::PanicInfo) -> ! {
 pub extern "C" fn kernel_main(boot_info: &BootInfo) -> ! {
     serial_println!("{:?}", boot_info);
 
-    #[cfg(not(feature = "os-test"))]
+    #[cfg(not(os_test))]
     {
         let addr = boot_info as *const _ as u32;
         serial_println!("boot_info address = 0x{:08x}", addr);
     }
 
     for (tag, _addr) in boot_info.tags() {
-        #[cfg(not(feature = "os-test"))]
+        #[cfg(not(os_test))]
         serial_println!("0x{:08x}: {:?}", _addr, tag);
 
-        #[cfg(feature = "os-test")]
+        #[cfg(os_test)]
         serial_println!("{:?}", tag);
     }
 
@@ -33,7 +33,7 @@ pub extern "C" fn kernel_main(boot_info: &BootInfo) -> ! {
     let memory_map = boot_info.memory_map().unwrap();
     let section_headers = boot_info.section_headers().unwrap();
 
-    #[cfg(not(feature = "os-test"))]
+    #[cfg(not(os_test))]
     {
         for item in memory_map {
             serial_println!("{:?}", item);
@@ -70,7 +70,7 @@ pub extern "C" fn kernel_main(boot_info: &BootInfo) -> ! {
         }
     }
 
-    #[cfg(feature = "os-test")]
+    #[cfg(os_test)]
     {
         serial_println!("memory map (3): address = 0x{:08x}", {
             memory_map.clone().nth(3).unwrap().base_addr

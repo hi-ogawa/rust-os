@@ -19,7 +19,7 @@ pub extern "C" fn kernel_main() -> ! {
     let mut idt = Idt::new();
 
     // idt address
-    #[cfg(not(feature = "os-test"))]
+    #[cfg(not(os_test))]
     serial_println!("IDT address {:x}", idt.offset());
 
     // lidt

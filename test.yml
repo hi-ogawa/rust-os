@@ -1,5 +1,5 @@
 - name: dev
-  command: make -s run example=dev qemu_options='-display none' cargo_options='--features os-test'
+  command: make -s run example=dev qemu_options='-display none'
   stdout: |
     hello serial
     BEFORE int3
@@ -7,7 +7,7 @@
     AFTER int3
 
 - name: idt
-  command: make -s run example=idt qemu_options='-display none' cargo_options='--features os-test'
+  command: make -s run example=idt qemu_options='-display none' cargo_options='-- --cfg os_test'
   stdout: |
     BEFORE `idt.load`
     AFTER `idt.load`
@@ -21,29 +21,29 @@
     PAGE_FAULT: error_code = 2, cr2 = 0xdeadbeaf
 
 - name: panic
-  command: make -s run example=panic qemu_options='-display none' cargo_options='--features os-test'
+  command: make -s run example=panic qemu_options='-display none'
   stdout: |
     panicked at 'assertion failed: `(left == right)`
       left: `3`,
      right: `0`', examples/panic.rs:23:5
 
 - name: fmt
-  command: make -s run example=fmt qemu_options='-display none' cargo_options='--features os-test'
+  command: make -s run example=fmt qemu_options='-display none'
   stdout: |
     1 / 3 = 0.3333333333333333
 
 - name: uart
-  command: make -s run example=uart qemu_options='-display none' cargo_options='--features os-test'
+  command: make -s run example=uart qemu_options='-display none'
   stdout: |
     Hello World!
 
 - name: double_fault
-  command: make -s run example=double_fault qemu_options='-display none' cargo_options='--features os-test'
+  command: make -s run example=double_fault qemu_options='-display none'
   stdout: |
     DOUBLE_FAULT: error_code = 0
 
 - name: multiboot2
-  command: make -s run example=multiboot2 qemu_options='-display none' cargo_options='--features os-test'
+  command: make -s run example=multiboot2 qemu_options='-display none' cargo_options='-- --cfg os_test'
   stdout: |
     BootInfo { total_size: 1672, reserved: 0 }
     Tag { type_: 21, size: 12 }
@@ -61,7 +61,7 @@
     section header (1): address = 0x00100000
 
 - name: frame_allocator
-  command: make -s run example=frame_allocator qemu_options='-display none' cargo_options='--features os-test'
+  command: make -s run example=frame_allocator qemu_options='-display none' cargo_options='-- --cfg os_test'
   stdout: |
     0
     2000
@@ -97,7 +97,7 @@
     32000
 
 - name: page_table
-  command: make -s run example=page_table qemu_options='-display none' cargo_options='--features os-test'
+  command: make -s run example=page_table qemu_options='-display none'
   stdout: |
     present p4 entry
        0
@@ -125,7 +125,7 @@
        0xdeadbeaf  ==> None
 
 - name: memory
-  command: make -s run example=memory qemu_options='-display none' cargo_options='--features os-test'
+  command: make -s run example=memory qemu_options='-display none'
   stdout: |
     BEFORE map_page_to_frame
     virtual_to_physical(0xdeadbeaf) = None

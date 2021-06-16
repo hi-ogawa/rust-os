@@ -3,12 +3,6 @@ name = "os"
 version = "0.1.0"
 edition = "2018"
 
-
-[features]
-# Skip non-deterministic output for testing via `#[cfg(not(feature = "os-test"))]`
-os-test = []
-
-
 [[example]]
 name = "dev"
 crate-type = ["staticlib"]

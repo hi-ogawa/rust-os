@@ -40,7 +40,7 @@ pub extern "C" fn kernel_main(boot_info: &BootInfo) -> ! {
         );
     }
 
-    if cfg!(feature = "os-test") {
+    if cfg!(os_test) {
         let header = boot_info.section_headers().nth(1).unwrap();
         serial_println!("section: addr = 0x{:08x}", { header.addr });
     } else {

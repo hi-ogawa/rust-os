@@ -1,6 +1,6 @@
 # Options
 example := dev
-cargo_options := # e.g. --features os-test
+cargo_options := # e.g. -- --cfg os_test
 qemu_options := # e.g. -display none -d int -no-reboot
 qemu_success := 123
 

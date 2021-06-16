@@ -13,7 +13,7 @@ fn panic(info: &core::panic::PanicInfo) -> ! {
 
 #[no_mangle]
 pub extern "C" fn kernel_main(boot_info: &BootInfo) -> ! {
-    #[cfg(not(feature = "os-test"))]
+    #[cfg(not(os_test))]
     {
         serial_println!("usable memory");
         for (lo, hi) in boot_info.usable_memory() {
